@@ -1,5 +1,5 @@
 {
-  "name": "one-storage",
+  "name": "spa-storage",
   "type": "module",
   "version": "1.0.0",
   "description": "Browser Storage plugin for Svelte and Pinia",

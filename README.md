@@ -1,14 +1,14 @@
-# One Storage - Browser Storage Plugin for Svelte and Pinia
+# SPA Storage - Browser Storage Plugin for Svelte and Pinia
 
 ## Integrate easely with browser storage and forage!
 
-One Storage makes it ease to send and retrieve information to browser storage and forage.
+SPA Storage makes it ease to send and retrieve information to browser storage and forage.
 You can choose witch one to use and configure how it will behave.
 FORAGE is default!
 
 ## Index
 
-- [One Storage - Browser Storage Plugin for Svelte and Pinia](#one-storage---browser-storage-plugin-for-svelte-and-pinia)
+- [SPA Storage - Browser Storage Plugin for Svelte and Pinia](#spa-storage---browser-storage-plugin-for-svelte-and-pinia)
   - [Integrate easely with browser storage and forage!](#integrate-easely-with-browser-storage-and-forage)
   - [Index](#index)
   - [Features](#features)
@@ -35,23 +35,23 @@ To install Svelte Router on your svelte app:
 with npm
 
 ```bash
-npm i one-storage
+npm i spa-storage
 ```
 
 ### Example
  
 ```javascript
-// importing oneStorage
-import oneStorage from "one-storage";
+// importing spaStorage
+import spaStorage from "spa-storage";
 
 // configure options
-const STORE = oneStorage("forage", {
+const STORE = spaStorage("forage", {
   encrypted: true,
-  IDX_DB_NAME: `OS_DB_`,
-  IDX_DB_STORE: `OS_IDX_STORE_`,
-  EXPIRE_KEYS: `OS_EXPIRE_KEYS`,
+  IDX_DB_NAME: `SS_DB_`,
+  IDX_DB_STORE: `SS_IDX_STORE_`,
+  EXPIRE_KEYS: `SS_EXPIRE_KEYS`,
   VERSION: 1,
-  DESCRIPTION: `OS_DB_DESCRIPTOR_1`,
+  DESCRIPTION: `SS_DB_DESCRIPTOR_1`,
   CHECK_EXPIRED_KEYS_INTERVAL: 5000,
 });
 
@@ -66,8 +66,8 @@ Now to use it you have just to import it in your stores and use!
  
 ```javascript
 // DEFINING APP STORE! It could be any store!
-// importing oneStorage configured as above
-import OS from "./storage.js";
+// importing spaStorage configured as above
+import SS from "./storage.js";
 
 const STORAGE_KEY = "APP_STORE";
 
@@ -85,16 +85,16 @@ async function setThemeDark(themeDark) {
 
   // this is just a shortcut to update a key inside SVELTE STORE - doesn't update the key into 
   // the browser value
-  OS.updateStoreKey(store, { themeDark });
+  SS.updateStoreKey(store, { themeDark });
   
   // THIS updates the value inside the storage chosen - FORAGE is default!
-  await OS.setSvelteStoreInStorage(store.subscribe, STORAGE_KEY, undefined, [
+  await SS.setSvelteStoreInStorage(store.subscribe, STORAGE_KEY, undefined, [
     "menuOpened",
   ]);
 }
 
 function getThemeDark() {
-  return OS.getStoreKey(store, "themeDark");
+  return SS.getStoreKey(store, "themeDark");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ Now to retrieve the information - when you first load the app
 
 ```javascript
 
-import OS from "../storage.js";
+import SS from "../storage.js";
 
 // importing store defined above..
 import appStr from "./app/index.js";
@@ -117,7 +117,7 @@ export const appStore = { ...appStr };
 
 // now that we have the store defined we can retrieve information from the browser navigator
 // this will load the information from the browser to the app store
-await OS.getSvelteStoreInStorage(appStr.update, appStr.STORAGE_KEY);
+await SS.getSvelteStoreInStorage(appStr.update, appStr.STORAGE_KEY);
 
 ```
 
