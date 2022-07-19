@@ -1,0 +1,22 @@
+{
+  "name": "one-storage",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Browser Storage plugin for Svelte and Pinia",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "localforage",
+    "svelte",
+    "plugin"
+  ],
+  "author": "Arthur J. Germano",
+  "license": "MIT",
+  "dependencies": {
+    "crypto-js": "^4.1.1",
+    "date-fns": "^2.28.0",
+    "localforage": "^1.10.0"
+  }
+}
