@@ -1,6 +1,7 @@
 <script>
   import SS_Header from "./components/SS_Header.svelte";
   import SS_Main from "./components/SS_Main.svelte";
+  import SS_Footer from "./components/SS_Footer.svelte";
   import { loadStores } from "./js/stores/index.js";
   import { appStore } from "./js/stores";
 
@@ -17,19 +18,18 @@
     <main>
       <SS_Main />
     </main>
+    <footer>
+      <SS_Footer />
+    </footer>
   {/await}
 </div>
 
 <style>
   .ss-app {
     position: relative;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "header"
-      "main";
     min-height: 100vh;
     transition: all 0.3s ease-in-out;
+    overflow: hidden;
   }
 
   .ss-loading {

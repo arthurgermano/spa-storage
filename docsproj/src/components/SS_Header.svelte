@@ -31,7 +31,7 @@
     display: grid;
     align-items: center;
     justify-content: center;
-    height: 100px;
+    padding: 2rem 0;
     font-size: 2rem;
     text-align: center;
     color: #fca728;
