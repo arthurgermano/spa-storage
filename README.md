@@ -5,10 +5,14 @@
 SPA Storage makes it ease to send and retrieve information to browser storage and forage.
 You can choose witch one to use and configure how it will behave.
 
+## Test It
+<a href="https://arthurgermano.github.io/spa-storage/" _target="blank">SPA Storage - testing</a>
+
 ## Index
 
 - [SPA Storage - Browser Storage Plugin for Svelte and Pinia](#spa-storage---browser-storage-plugin-for-svelte-and-pinia)
   - [Integrate easely with browser storage and forage!](#integrate-easely-with-browser-storage-and-forage)
+  - [Test It](#test-it)
   - [Index](#index)
   - [Features](#features)
   - [Install](#install)

@@ -23,7 +23,7 @@
   "bugs": {
     "url": "https://github.com/arthurgermano/spa-storage/issues"
   },
-  "homepage": "https://github.com/arthurgermano/spa-storage#readme",
+  "homepage": "https://arthurgermano.github.io/spa-storage/",
   "dependencies": {
     "crypto-js": "^4.1.1",
     "localforage": "^1.10.0"
