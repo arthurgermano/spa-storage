@@ -4,6 +4,7 @@
 
 SPA Storage makes it ease to send and retrieve information to browser storage and forage.
 You can choose witch one to use and configure how it will behave.
+FORAGE is default!
 
 ## Index
 
@@ -15,17 +16,13 @@ You can choose witch one to use and configure how it will behave.
     - [Example](#example)
       - [SVELTE USAGE](#svelte-usage)
       - [PINIA USAGE](#pinia-usage)
-  - [Main Methods Exported and Signatures](#main-methods-exported-and-signatures)
-    - [Storage Methods](#storage-methods)
-    - [Svelte Methods](#svelte-methods)
-    - [Pinia Methods](#pinia-methods)
+  - [Methods Exported and Signatures](#methods-exported-and-signatures)
 
 
 ## Features
 
 - Ease Configuration
 - Set Keys with Timeout 
-- Set Keys with Encryption
 - Key Chain of Expire Keys
 - Integration with Svelte 
 - Integration with Pinia - VueJS
@@ -33,7 +30,7 @@ You can choose witch one to use and configure how it will behave.
 
 ## Install
 
-To install SPA Storage Plugin on your app:
+To install Svelte Router on your svelte app:
 
 with npm
 
@@ -44,15 +41,22 @@ npm i spa-storage
 ### Example
  
 ```javascript
-
 // importing spaStorage
-import { spaStorage, svelteFunctions, piniaFunctions } from "spa-storage";
+import spaStorage from "spa-storage";
 
-// starting forage to use IndexedDB
-spaStorage.startForage(undefined, { name: "SS_MY_CUSTOM_NAME", storeName: "SS_CUSTOM_STORE_NAME" });
+// configure options
+const STORE = spaStorage("forage", {
+  encrypted: true,
+  IDX_DB_NAME: `SS_DB_`,
+  IDX_DB_STORE: `SS_IDX_STORE_`,
+  EXPIRE_KEYS: `SS_EXPIRE_KEYS`,
+  VERSION: 1,
+  DESCRIPTION: `SS_DB_DESCRIPTOR_1`,
+  CHECK_EXPIRED_KEYS_INTERVAL: 5000,
+});
 
-// starting storage to use localStorage
-export { spaStorage, svelteFunctions, piniaFunctions };
+// export it as simple as that!
+export default STORE;
 
 ```
 
@@ -63,28 +67,34 @@ Now to use it you have just to import it in your stores and use!
 ```javascript
 // DEFINING APP STORE! It could be any store!
 // importing spaStorage configured as above
-import { writable } from "svelte/store";
-import { assign } from "../helpers.js"; // same as cloneDeep from lodash
-import { svelteFunctions as SF } from "./storage.js";
+import SS from "./storage.js";
 
-const STORAGE_KEY = "SS_APP_STORE";
+const STORAGE_KEY = "APP_STORE";
 
 const storeTemplate = {
+  menuOpened: false,
   themeDark: false,
 };
 
-const store = writable(assign({}, storeTemplate));
+const store = writable(structuredClone(storeTemplate));
 
 // ------------------------------------------------------------------------------------------------
 // --------------  darkTheme Property  ------------------------------------------------------------
 
 async function setThemeDark(themeDark) {
-  SF.updateStoreKey(store, { themeDark });
-  await SF.setSvelteStoreInStorage(store, STORAGE_KEY);
+
+  // this is just a shortcut to update a key inside SVELTE STORE - doesn't update the key into 
+  // the browser value
+  SS.updateStoreKey(store, { themeDark });
+  
+  // THIS updates the value inside the storage chosen - FORAGE is default!
+  await SS.setSvelteStoreInStorage(store.subscribe, STORAGE_KEY, undefined, [
+    "menuOpened",
+  ]);
 }
 
 function getThemeDark() {
-  return SF.getStoreKey(store, "themeDark");
+  return SS.getStoreKey(store, "themeDark");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -95,26 +105,19 @@ Now to retrieve the information - when you first load the app
 
 ```javascript
 
-import { svelteFunctions as SF } from "./storage.js";
-import appStore from "./app.js";
+import SS from "../storage.js";
 
-export let IS_READY = false;
-export async function loadStores() {
-  if (IS_READY) return true;
+// importing store defined above..
+import appStr from "./app/index.js";
 
-  try {
-    // now that we have the store defined we can retrieve information from the browser navigator
-    // this will load the information from the browser to the app store
-    await SF.getSvelteStoreInStorage(appStore.store, appStore.STORAGE_KEY);
-    IS_READY = true;
-    return true;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
+// defining a better naming after import
+// this file in this example will contain all stores of the application
+export const appStore = { ...appStr };
 
-export { appStore };
+
+// now that we have the store defined we can retrieve information from the browser navigator
+// this will load the information from the browser to the app store
+await SS.getSvelteStoreInStorage(appStr.update, appStr.STORAGE_KEY);
 
 ```
 
@@ -131,12 +134,12 @@ import useAppStore from "./app.js";
 export const appStore = useAppStore();
 
 // loading from browser information to the Pinia store
-await getPiniaStoreInStorage(appStore, appStore.$id);
+await getPiniaStoreInStorage(appStore.$patch, appStore.$id);
 
 // now you can use subscribe to listen any changes and update the store automatically
 // as below
 await setPiniaStoreInStorage(
-  appStore, 
+  appStore.$subscribe, 
   appStore.$id, 
   undefined, 
   [
@@ -148,34 +151,9 @@ await setPiniaStoreInStorage(
 
 ```
 
-## Main Methods Exported and Signatures
-
-### Storage Methods
+## Methods Exported and Signatures
 
 ```javascript
-
-// -----------------------------  startStorage  ---------------------------------------------------
-
-function startStorage(config = {})
-// config.encrypted - true or false
-// config.expireKeysKey - the name of the key that will be used to store the expire keys
-// config.checkExpiredKeysInterval - the interval in milliseconds to check for expired keys
-
-// -----------------------------  startForage  ----------------------------------------------------
-
-function startForage(config = {}, forageConfig)
-// config.encrypted - true or false
-// config.expireKeysKey - the name of the key that will be used to store the expire keys
-// config.checkExpiredKeysInterval - the interval in milliseconds to check for expired keys
-
-// forageConfig.name - the name of the database
-// forageConfig.storeName - the name of the store
-// forageConfig.version - the version of the database
-// forageConfig.description - the description of the database
-
-// -----------------------------  configure  ------------------------------------------------------
-
-function configure(config = {}, forageConfig)
 
 // -----------------------------  getItem  --------------------------------------------------------
 
@@ -215,28 +193,19 @@ async function clearKeyList(keyList)
 // IT IS CALLED AUTOMATICALLY EVERY INTERVAL SET BY CHECK_EXPIRED_KEYS_INTERVAL
 async function removeExpiredKeys()
 
-
-```
-
-### Svelte Methods
-
-```javascript
-
 // -----------------------------  SvelteStorage  --------------------------------------------------
 // -----------------------------  setSvelteStoreInStorage  ----------------------------------------
 
 async function setSvelteStoreInStorage(
-  store, // function to subscribe to the SVELTE store
+  subscribe, // function to subscribe to the SVELTE store
   key, // key to be updated in the browser storage
-  options: {
-    timeout, // time in milliseconds to expire the key - if not set will be forever
-    ignoreKeys = [] // array of keys to ignore when updating the browser storage - this will be as the keys never existed
-  }
+  timeout, // time in milliseconds to expire the key - if not set will be forever
+  ignoreKeys = [] // array of keys to ignore when updating the browser storage - this will be as the keys never existed
 )
 
 // -----------------------------  getSvelteStoreInStorage  ----------------------------------------
 
-async function getSvelteStoreInStorage(store, key) // retrieves a key from the browser storage
+async function getSvelteStoreInStorage(update, key) // retrieves a key from the browser storage
 // update - function to update the SVELTE store
 // key - key to retrieve
 
@@ -261,28 +230,20 @@ function updateStoreKey(store, objectKeyValue, storeStateSubstitute) // updates 
 // objectKeyValue - object with the key and value to update
 // storeStateSubstitute - if informed will replace the store state with this value
 
-```
-
-### Pinia Methods
-
-```javascript
-
 // -----------------------------  PiniaStorage  ---------------------------------------------------
 // -----------------------------  setPiniaStoreInStorage  -----------------------------------------
 
 async function setPiniaStoreInStorage(
-  store, // store to subscribe to the Pinia store
+  $subscribe, // function to subscribe to the Pinia store
   key, // key to be updated in the browser storage
-  options: {
-    timeout, // time in milliseconds to expire the key - if not set will be forever
-    ignoreKeys = [] // array of keys to ignore when updating the browser storage - this will be as the keys never existed
-  }
+  timeout, // time in milliseconds to expire the key - if not set will be forever
+  ignoreKeys = [] // array of keys to ignore when updating the browser storage - this will be as the keys never existed
 ) 
 
 // -----------------------------  getPiniaStoreInStorage  -----------------------------------------
 
-async function getPiniaStoreInStorage(store, key) // retrieves a key from the browser storage
-// store - function to update the Pinia store
+async function getPiniaStoreInStorage($patch, key) // retrieves a key from the browser storage
+// $patch - function to update the Pinia store
 // key - key to retrieve
 
 
