@@ -1,4 +1,5 @@
 import { setItem, getItem } from "./storageFunctions.js";
+import cloneDeep from "lodash.clonedeep";
 
 // ------------------------------------------------------------------------------------------------
 // -----------------------------  getStoreState  --------------------------------------------------
@@ -9,7 +10,7 @@ export const getStoreState = (store) => {
     let storeState;
     const unsubscribe = store.subscribe((state) => {
       if (typeof state === "object" || Array.isArray(state)) {
-        storeState = structuredClone(state);
+        storeState = cloneDeep(state);
         return;
       }
       storeState = state;
@@ -44,8 +45,8 @@ export const updateStoreKey = (store, objectKeyValue, storeStateSubstitute) => {
     checkStore(store);
     store.update((storeState) => {
       return Object.assign(
-        structuredClone(storeStateSubstitute || storeState),
-        structuredClone(objectKeyValue)
+        cloneDeep(storeStateSubstitute || storeState),
+        cloneDeep(objectKeyValue)
       );
     });
   } catch (error) {
@@ -79,7 +80,7 @@ export async function getSvelteStoreInStorage(store, key) {
       return;
     }
     store.update(() => {
-      return Object.assign({}, structuredClone(storage));
+      return Object.assign({}, cloneDeep(storage));
     });
     return true;
   } catch (error) {

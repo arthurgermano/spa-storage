@@ -1,6 +1,6 @@
 {
   "name": "spa-storage",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "type": "module",
   "description": "Browser Storage plugin for Svelte and Pinia",
   "main": "index.js",
@@ -26,7 +26,8 @@
   "homepage": "https://arthurgermano.github.io/spa-storage/",
   "dependencies": {
     "crypto-js": "^4.1.1",
-    "localforage": "^1.10.0"
+    "localforage": "^1.10.0",
+    "lodash.clonedeep": "^4.5.0"
   },
   "devDependencies": {
     "@vue/composition-api": "^1.7.0",

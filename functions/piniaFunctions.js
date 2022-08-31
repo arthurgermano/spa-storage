@@ -1,4 +1,5 @@
 import { setItem, getItem } from "./storageFunctions.js";
+import cloneDeep from "lodash.clonedeep";
 
 // ------------------------------------------------------------------------------------------------
 // -----------------------------  setPiniaStoreInStorage  -----------------------------------------
@@ -45,7 +46,7 @@ export async function getPiniaStoreInStorage(store, key) {
     if (!storage) {
       return;
     }
-    store.$patch(Object.assign({}, structuredClone(storage)));
+    store.$patch(Object.assign({}, cloneDeep(storage)));
     return true;
   } catch (error) {
     throw error;
