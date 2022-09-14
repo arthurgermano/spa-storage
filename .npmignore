@@ -2,6 +2,7 @@
 /docs/
 /docsproj/
 /public/
+/tests/
 .DS_Store
 .idea
 .vscode
@@ -9,3 +10,4 @@
 node_modules
 yarn.lock
 eng.traineddata
+README_v1.md
